@@ -1,8 +1,8 @@
-root_path="/home/lafaiet/mypath"
-data_base="/home/lafaiet/Documents/LiClipse Workspace/Drop_Pobre/server/data/database.db"
+root_path="/home/lafa/mypath"
+data_base="/home/lafa/Documents/LiClipse Workspace/Drop_Pobre/server/data/database.db"
 
-KEYFILE='/home/lafaiet/Documents/LiClipse Workspace/Drop_Pobre/server/privkey.pem' # Replace with your PEM formatted key file
-CERTFILE='/home/lafaiet/Documents/LiClipse Workspace/Drop_Pobre/server/newcert.pem'  # Replace with your PEM formatted certificate file
+KEYFILE='/home/lafa/Documents/LiClipse Workspace/Drop_Pobre/server/certs/privkey.pem' # Replace with your PEM formatted key file
+CERTFILE='/home/lafa/Documents/LiClipse Workspace/Drop_Pobre/server/certs/newcert.pem'  # Replace with your PEM formatted certificate file
 # Configure above
 
 # XMLRPC

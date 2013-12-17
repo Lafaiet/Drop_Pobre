@@ -13,8 +13,11 @@ import BaseHTTPServer
 import SimpleHTTPServer
 import SimpleXMLRPCServer
 from security import *
+from action import *
+from threading import Thread
 
 import socket, ssl
+dependencies=[]
 
 class SecureXMLRPCServer(BaseHTTPServer.HTTPServer,SimpleXMLRPCServer.SimpleXMLRPCDispatcher):
     def __init__(self, server_address, HandlerClass, logRequests=True):
@@ -92,7 +95,7 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
             import string
             self.python_string = string
 
-        '''testing methods...
+        '''testing methods...'''
 
         def add(self, x, y):
             return x + y
@@ -102,25 +105,69 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
 
         def div(self,x,y):
             return x//y
-        '''
 
-        def file_changed(self):
-            pass
+        '''---------------------'''
 
-        def file_deleted(self):
-            pass
+        def client_sync(self,client,password):
+            if client_auth(client, password):
+                for d in dependencies:
+                    for i in range(len(d.owners)):
+                        c=d.owners[i]
+                        if client==c:
+                            if d.pend_type=="D":
+                                print d.directory
+                                print d.f
+                                return "D",d.directory,d.f
 
-        def file_created(self):
-            pass
+                            if d.pend_type=="C":
+                                sim_key=gen_key(16)
+                                iv=gen_iv()
+                                f=root_path+"/"+d.directory+"/"+d.f
+                                f_client(f, sim_key, iv)
+                                return "C",d.directory,d.f,sim_key,iv
 
-        def has_changed(self):
-            pass
+                            if d.pend_type=="M":
+                                sim_key=gen_key(16)
+                                iv=gen_iv()
+                                f=root_path+"/"+d.directory+"/"+d.f
+                                f_client(f, sim_key, iv)
+                                return "C",d.directory,d.f,sim_key,iv
 
-        def client_notify(self,client,file,password,reason):
-            if check_pass(password, ):
-                return "ok"
-            return "fail"
+                            d.owners.pop(i)
 
+
+                return "N"
+
+
+
+        def client_notify(self,client,directory,f,password,reason):
+            #print "client= %s password= %s dir=%s f=%s"%(client,password,directory,f)
+
+            if client_auth(client, password):
+                if check_ownership(client, directory) :
+                    sim_key=gen_key(16)
+                    iv=gen_iv()
+                    if reason== "created":
+                        th=Thread( target=f_created, args = (client,directory,f,sim_key,iv ) )
+                        th.start()
+                        dependencies.append(add_pedency(client, directory, f, "C"))
+                        return sim_key,iv
+
+
+                    if reason== "modified":
+                        th=Thread( target=f_modified, args = (client,directory,f,sim_key,iv ) )
+                        th.start()
+                        dependencies.append(add_pedency(client, directory, f, "M"))
+                        return sim_key,iv
+
+
+                    if reason== "deleted":
+                        th=Thread( target=f_deleted, args = (client,directory,f ) )
+                        th.start()
+                        dependencies.append(add_pedency(client, directory, f, "D"))
+                        return "Done!"
+
+            return False
 
     server_address = (LISTEN_HOST, LISTEN_PORT)
     server = ServerClass(server_address, HandlerClass)
@@ -128,4 +175,3 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
 
     print "Serving HTTPS on %s, port %d" % (LISTEN_HOST, LISTEN_PORT)
     server.serve_forever()
-

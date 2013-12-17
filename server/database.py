@@ -8,25 +8,46 @@ cursor = conn.cursor()
 
 def init_database():
     cursor.execute("""CREATE TABLE clients
-                 (name text PRIMARY KEY,auth_key text,is_auth integer)
+                 (name text PRIMARY KEY,auth_key text,salt text, is_auth integer)
               """)
 
     cursor.execute("""CREATE TABLE dirs
                   (client text, dir text)
                    """)
 
-def insert_client(client,h_key):
-    sql="""INSERT INTO clients (name,auth_key,is_auth) VALUES (?,?,?)
+def insert_client(client,h_key,salt):
+    sql="""INSERT INTO clients (name,auth_key,salt,is_auth) VALUES (?,?,?,?)
         """
-    cursor.execute(sql,(client,h_key,0))
+    cursor.execute(sql,(client,h_key,salt,0))
     conn.commit()
 
+def insert_dir(client,directory):
+    sql="""INSERT INTO dirs (client,dir) VALUES (?,?)
+        """
+    cursor.execute(sql,(client,directory))
+    conn.commit()
 
 def get_client(name):
     sql="""SELECT * FROM clients WHERE name=?
         """
     cursor.execute(sql,([name]))
     return cursor.fetchone()
+
+def get_clients_dir(directory):
+    sql="""SELECT client FROM dirs WHERE dir=?
+        """
+    cursor.execute(sql,([directory]))
+    r=[]
+    for c in cursor.fetchall():
+        r.append(c[0])
+
+    return r
+
+def get_dirs_client(client):
+    sql="""SELECT dir FROM dirs WHERE client=?
+        """
+    cursor.execute(sql,([client]))
+    return cursor.fetchall()
 
 def deauth_all():
     sql="select * from clients"
@@ -47,7 +68,6 @@ def print_all():
     print cursor.fetchall()  # ou use fetchone()
 
 
-#init_database()
-#insert_client("teste5", "chave")
 #print_all()
+#print get_clients_dir("ful_dir")
 

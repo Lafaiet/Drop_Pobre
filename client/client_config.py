@@ -1,3 +1,4 @@
-path="/home/lafaiet/mypath"
+path="/home/lafa/fulano"
 client='fulano'
-password='fulano'
+password='key'
+time_to_sync=10
