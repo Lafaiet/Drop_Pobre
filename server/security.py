@@ -1,5 +1,6 @@
 from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
+from Crypto.Hash import MD5
 from Crypto import Random
 from Crypto.Random import random
 from database import *
@@ -78,6 +79,11 @@ def dec_file(e_f,d_f,sim_key,iv):
     e_f.close()
     return "done"
 
+def test_integrity(f,f_h):
+    f=open(f,"r")
+    st=f.read()
+    return MD5.new(st).hexdigest()==f_h
+
 
 # sim_key=gen_key(16)
 # iv=gen_iv()
@@ -87,20 +93,20 @@ def dec_file(e_f,d_f,sim_key,iv):
 # print "Done!"
 
 # init_database()
-# salt=gen_key(16)
+# salt=gen_key(32)
 # insert_client('fulano', pass_hash("key"+salt),salt)
-#
-# salt=gen_key(16)
+# #
+# salt=gen_key(32)
 # insert_client('ciclano', pass_hash("key"+salt),salt)
-#
-# salt=gen_key(16)
+# #
+# salt=gen_key(32)
 # insert_client('beltrano', pass_hash("key"+salt),salt)
-#
+# #
 # insert_dir("fulano", "ful_dir")
 # insert_dir("ciclano", "cil_dir")
 # insert_dir("ciclano", "ful_dir")
 # insert_dir("beltrano", "bel_dir")
-#
+# #
 # print "done!"
 #print client_auth("ciclano", "key")
 

@@ -3,6 +3,7 @@ from server_config import *
 import os
 from pendency import *
 from database import *
+from security import *
 
 
 def add_pedency(client,directory,f,pend_type):
@@ -15,14 +16,18 @@ def add_pedency(client,directory,f,pend_type):
     return p
 
 
-def f_created(client,directory,f,sim_key,iv):
-    f_server(root_path+"/"+directory+"/"+f, sim_key, iv)
-    print "Transfered!"
+def f_created(client,directory,f,sim_key,iv,f_h):
+    f=root_path+"/"+directory+"/"+f
+    f_server(f, sim_key, iv)
+    if test_integrity(f, f_h):
+        print "Transfered!"
 
-def f_modified(client,directory,f,sim_key,iv):
+def f_modified(client,directory,f,sim_key,iv,f_h):
     os.system("rm %s"%(root_path+"/"+directory+"/"+f))
-    f_server(root_path+"/"+directory+"/"+f, sim_key, iv)
-    print "Modified!"
+    f=root_path+"/"+directory+"/"+f
+    f_server(f, sim_key, iv)
+    if test_integrity(f, f_h):
+        print "Modified!"
 
 def f_deleted(client,directory,f):
     os.system("rm %s"%(root_path+"/"+directory+"/"+f))

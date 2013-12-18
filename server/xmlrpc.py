@@ -140,7 +140,7 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
 
 
 
-        def client_notify(self,client,directory,f,password,reason):
+        def client_notify(self,client,directory,f,password,reason,f_h):
             #print "client= %s password= %s dir=%s f=%s"%(client,password,directory,f)
 
             if client_auth(client, password):
@@ -148,14 +148,14 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
                     sim_key=gen_key(16)
                     iv=gen_iv()
                     if reason== "created":
-                        th=Thread( target=f_created, args = (client,directory,f,sim_key,iv ) )
+                        th=Thread( target=f_created, args = (client,directory,f,sim_key,iv,f_h ) )
                         th.start()
                         dependencies.append(add_pedency(client, directory, f, "C"))
                         return sim_key,iv
 
 
                     if reason== "modified":
-                        th=Thread( target=f_modified, args = (client,directory,f,sim_key,iv ) )
+                        th=Thread( target=f_modified, args = (client,directory,f,sim_key,iv,f_h ) )
                         th.start()
                         dependencies.append(add_pedency(client, directory, f, "M"))
                         return sim_key,iv

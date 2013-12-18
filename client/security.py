@@ -1,6 +1,9 @@
+from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
+from Crypto.Hash import MD5
 from Crypto import Random
 from Crypto.Random import random
+
 
 
 def encript_word(key,word,iv):
@@ -13,12 +16,14 @@ def decript_word(key,word,iv):
 
 
 def gen_iv():
-    return Random.new().read(AES.block_size)
+    #return Random.new().read(AES.block_size)
+    return gen_key(AES.block_size)
 
 def gen_key(size):
     k=""
     for i in range(size):
-        k=k+str(chr(random.randint(0,127)))
+        k=k+str(chr(random.randint(39,126)))
+        #k=k+str(chr(random.randint(0,127)))
     return k
 
 
@@ -47,3 +52,8 @@ def dec_file(e_f,d_f,sim_key,iv):
     d_f.close()
     e_f.close()
     return "done"
+
+def test_integrity(f,f_h):
+    f=open(f,"r")
+    st=f.read()
+    return MD5.new(st).hexdigest()==f_h
