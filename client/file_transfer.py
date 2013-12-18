@@ -44,3 +44,6 @@ def f_client(f,sim_key,iv):
         l = f.read(1024)
     s.close()
     os.system("rm %s"%("temp_"))
+
+#f_client("f1", "xxxxxxxxxxxxxxxx", "xxxxxxxxxxxxxxxx")
+

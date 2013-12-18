@@ -6,6 +6,19 @@ import sys
 from security import *
 import os
 
+# import SimpleHTTPServer
+# import SocketServer
+# from server_config import *
+#
+# def run_fserver(directory):
+#     print "HTTP server runnig at port %s"%(fs_PORT)
+#     os.system("cd %s"%directory)
+#     os.system("python -m SimpleHTTPServer %s"%(fs_PORT))
+#
+# def kill_fserver():
+#     os.system("p=$(ps aux | grep Simple | awk 'NR==1 {print $2}')")
+#     os.system("kill $p")
+
 
 def f_server(f,sim_key,iv):
 
@@ -44,3 +57,5 @@ def f_client(f,sim_key,iv):
         l = f.read(1024)
     s.close()
     os.system("rm %s"%("temp_"))
+
+#f_server("f2", "xxxxxxxxxxxxxxxx", "xxxxxxxxxxxxxxxx")

@@ -173,5 +173,8 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
     server = ServerClass(server_address, HandlerClass)
     server.register_instance(xmlrpc_registers())
 
-    print "Serving HTTPS on %s, port %d" % (LISTEN_HOST, LISTEN_PORT)
-    server.serve_forever()
+    try:
+        print "Serving HTTPS on %s, port %d" % (LISTEN_HOST, LISTEN_PORT)
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print 'Exiting'
