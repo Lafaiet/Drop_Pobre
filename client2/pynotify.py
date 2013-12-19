@@ -7,6 +7,7 @@ from xmlrpc import *
 from threading import Thread
 import os
 
+
 def get_dir(path):
         p=path.split('/')
         size=len(p)
@@ -31,7 +32,7 @@ def sync(client, password):
     while True:
         time.sleep(time_to_sync)
         r = server.client_sync(client, password)
-        print r
+        #print r
         if len(r) > 1:
             f=path + "/" + r[1] + "/" + r[2]
             if r[0] == "D":
@@ -39,16 +40,24 @@ def sync(client, password):
                 pass
 
             if r[0] == "C":
-                #sim_key,iv=r[3],r[4]
-                #f_server(f, sim_key, iv)
-                pass
+                sim_key,iv,f_h=r[3],r[4],r[5]
+                f_server(f, sim_key, iv)
+                if test_integrity(f, f_h):
+                    print "Successfully Transfered!"
+                else:
+                    print "An error has occurred!"
+
 
             if r[0] == "M":
-                #os.system("rm %s" % (f))
-                #f_server(f, sim_key, iv)
-                    pass
-
-
+                sim_key,iv,f_h=r[3],r[4],r[5]
+                f_server(f, sim_key, iv)
+                if test_integrity(f, f_h):
+                    print "Successfully Transfered!"
+                else:
+                    print "An error has occurred!"
+        else:
+            #print "No changes!"
+            print r
 
 
 

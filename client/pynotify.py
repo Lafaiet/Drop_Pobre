@@ -33,13 +33,14 @@ def sync(client, password):
         r = server.client_sync(client, password)
         #print r
         if len(r) > 1:
-            print "HEre!!!!"
             f=path + "/" + r[1] + "/" + r[2]
             if r[0] == "D":
-                #os.system("rm %s" % (f))
+                print "Deleted!"
+                os.system("rm %s" % (f))
                 pass
 
             if r[0] == "C":
+                print "Created!"
                 sim_key,iv,f_h=r[3],r[4],r[5]
                 f_server(f, sim_key, iv)
                 if test_integrity(f, f_h):
@@ -49,12 +50,16 @@ def sync(client, password):
 
 
             if r[0] == "M":
+                print "Modified!!"
                 sim_key,iv,f_h=r[3],r[4],r[5]
                 f_server(f, sim_key, iv)
                 if test_integrity(f, f_h):
                     print "Successfully Transfered!"
                 else:
                     print "An error has occurred!"
+        else:
+            #print "No changes!"
+            print r
 
 
 
