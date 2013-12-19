@@ -4,6 +4,13 @@ import os
 from pendency import *
 from database import *
 from security import *
+import time
+
+
+
+def f_created_s(f,sim_key,iv):
+    time.sleep(2)
+    f_client(f, sim_key, iv)
 
 
 def add_pedency(client,directory,f,pend_type):

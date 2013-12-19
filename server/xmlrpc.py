@@ -120,11 +120,14 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
                                 return "D",d.directory,d.f
 
                             if d.pend_type=="C":
+                                print "created dependency!"
                                 sim_key=gen_key(16)
                                 iv=gen_iv()
                                 f=root_path+"/"+d.directory+"/"+d.f
-                                f_client(f, sim_key, iv)
-                                return "C",d.directory,d.f,sim_key,iv
+                                f_h=get_f_h(f)
+                                th=Thread( target=f_created_s, args = (f, sim_key, iv) )
+                                th.start()
+                                return "C",d.directory,d.f,sim_key,iv,f_h
 
                             if d.pend_type=="M":
                                 sim_key=gen_key(16)
