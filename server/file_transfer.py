@@ -43,6 +43,8 @@ def f_server(f,sim_key,iv):
     s.close()
     dec_file("temp",f, sim_key, iv)
     os.system("rm %s"%("temp"))
+    #f=open(f,"w")
+    #f.write("dummy!")
 
 
 

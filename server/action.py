@@ -20,14 +20,18 @@ def f_created(client,directory,f,sim_key,iv,f_h):
     f=root_path+"/"+directory+"/"+f
     f_server(f, sim_key, iv)
     if test_integrity(f, f_h):
-        print "Transfered!"
+        print "Successfully Transfered!"
+    else:
+        print "An error has occurred!"
 
 def f_modified(client,directory,f,sim_key,iv,f_h):
     os.system("rm %s"%(root_path+"/"+directory+"/"+f))
     f=root_path+"/"+directory+"/"+f
     f_server(f, sim_key, iv)
     if test_integrity(f, f_h):
-        print "Modified!"
+        print "Successfully Transfered!"
+    else:
+        print "An error has occurred!"
 
 def f_deleted(client,directory,f):
     os.system("rm %s"%(root_path+"/"+directory+"/"+f))

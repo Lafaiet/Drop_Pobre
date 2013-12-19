@@ -53,7 +53,10 @@ def dec_file(e_f,d_f,sim_key,iv):
     e_f.close()
     return "done"
 
-def test_integrity(f,f_h):
+def get_f_h(f):
     f=open(f,"r")
     st=f.read()
-    return MD5.new(st).hexdigest()==f_h
+    return MD5.new(st).hexdigest()
+
+def test_integrity(f,f_h):
+    return get_f_h(f)==f_h

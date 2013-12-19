@@ -1,4 +1,4 @@
-path="/home/lafaiet/fulano"
+path="/home/lafa/fulano"
 client='fulano'
 password='key'
 time_to_sync=3

@@ -27,7 +27,6 @@ class custom_handler(FileSystemEventHandler):
         info=get_dir(event.src_path)
         notify_server("modified", info[0],info[1])
 
-
 def sync(client, password):
     while True:
         time.sleep(time_to_sync)
@@ -50,7 +49,7 @@ def sync(client, password):
                     pass
 
 
-th=Thread( target=sync, args = (client,password ) )
+
 
 
 def run_observer():
@@ -58,6 +57,7 @@ def run_observer():
     observer.schedule(custom_handler(),path,recursive=True)
     observer.start()
     print "Client Daemon running... "
+    th=Thread( target=sync, args = (client,password ) )
     #th.start()
 
     try:
