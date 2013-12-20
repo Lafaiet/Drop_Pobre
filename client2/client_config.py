@@ -1,4 +1,4 @@
-path="/home/lafaiet/ciclano"
+path="/home/lafa/ciclano"
 client='ciclano'
 password='key'
-time_to_sync=3
+time_to_sync=10

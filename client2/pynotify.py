@@ -7,7 +7,6 @@ from xmlrpc import *
 from threading import Thread
 import os
 
-
 def get_dir(path):
         p=path.split('/')
         size=len(p)
@@ -28,18 +27,22 @@ class custom_handler(FileSystemEventHandler):
         info=get_dir(event.src_path)
         notify_server("modified", info[0],info[1])
 
-def sync(client, password):
+def sync(client, password,observer):
+    server2 = xmlrpclib.Server('https://localhost:8443')
     while True:
         time.sleep(time_to_sync)
-        r = server.client_sync(client, password)
+        r = server2.client_sync(client, password)
         #print r
         if len(r) > 1:
+            observer.stop()
             f=path + "/" + r[1] + "/" + r[2]
             if r[0] == "D":
+                print "Deleted!"
                 os.system("rm %s" % (f))
                 pass
 
             if r[0] == "C":
+                print "Created!"
                 sim_key,iv,f_h=r[3],r[4],r[5]
                 f_server(f, sim_key, iv)
                 if test_integrity(f, f_h):
@@ -49,15 +52,18 @@ def sync(client, password):
 
 
             if r[0] == "M":
+                print "Modified!!"
                 sim_key,iv,f_h=r[3],r[4],r[5]
                 f_server(f, sim_key, iv)
                 if test_integrity(f, f_h):
                     print "Successfully Transfered!"
                 else:
                     print "An error has occurred!"
+            observer = Observer()
+            observer.schedule(custom_handler(),path,recursive=True)
+            observer.start()
         else:
-            #print "No changes!"
-            print r
+            print "No changes!"
 
 
 
@@ -66,7 +72,7 @@ def run_observer():
     observer.schedule(custom_handler(),path,recursive=True)
     observer.start()
     print "Client Daemon running... "
-    th=Thread( target=sync, args = (client,password ) )
+    th=Thread( target=sync, args = (client,password,observer ) )
     th.start()
 
     try:

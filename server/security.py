@@ -59,7 +59,7 @@ def enc_file(e_f,d_f,sim_key,iv):
     s=d_f.read(16)
 
     while len(s)>0:
-        enc_s=decript_word(sim_key, s, iv)
+        enc_s=encript_word(sim_key, s, iv)
         e_f.write(enc_s)
         s=d_f.read(16)
     e_f.close()
@@ -72,12 +72,13 @@ def dec_file(e_f,d_f,sim_key,iv):
     s=e_f.read(16)
 
     while len(s)>0:
-        dec_s=encript_word(sim_key, s, iv)
+        dec_s=decript_word(sim_key, s, iv)
         d_f.write(dec_s)
         s=e_f.read(16)
     d_f.close()
     e_f.close()
     return "done"
+
 
 def get_f_h(f):
     f=open(f,"r")
@@ -86,6 +87,144 @@ def get_f_h(f):
 
 def test_integrity(f,f_h):
     return get_f_h(f)==f_h
+
+
+"""
+Class for checking the strength of a password.
+Copyright (C) 2011 Henry Longmore.  This version
+of this file may be copied for personal, educational,
+or commercial purposes.  Use at your own risk.
+"""
+
+import os
+from os import path
+import math
+
+# Nota Bene: the configuration module is non-standard. You will
+# need to format and read your dictionary file yourself.
+#from djangoapps import configuration
+
+password_file = "dictionary" #Check out here---> http://wiki.skullsecurity.org/Passwords
+
+
+
+# Based on Password Strength Meter posted at Snipplr
+# http://snipplr.com/view/8755/password-strength-meter/
+
+class PasswordStrengthChecker(object):
+
+    def get_dict_words(self,password_file):
+        words=[]
+        f=open(password_file)
+        w=f.readline()
+
+        while len(w)>0:
+            words.append(w.rstrip())
+            w=f.readline()
+        return words
+
+
+    def __init__(self, strength='medium'):
+        self.punctuation = list("!@#$%^&* ()_+-='\";:[{]}\|.>,</?`~")
+        self.similarity_map = {
+            '3': 'e', 'x': 'k', '5': 's', '$': 's', '6': 'g', '7': 't',
+            '8': 'b', '|': 'l', '9': 'g', '+': 't', '@': 'a', '0': 'o',
+            '1': 'l', '2': 'z', '!': 'i', '1': 'i'}
+        #password_dictionary = configuration.Configuration(configpath=pwd_dict)
+        self.word_list = dict()
+        words=self.get_dict_words(password_file)
+
+        for w in words:
+            try:
+                self.word_list[len(w)]
+                self.word_list[len(w)].append(w)
+            except KeyError:
+                s=[]
+                s.append(w)
+                self.word_list[len(w)]=s
+
+        #print self.word_list
+
+#            self.word_list[i] = password_dictionary.get_option('%s' % i, [])
+
+        self.strengths = ['medium', 'strong', 'best']
+        self.thresholds = {'medium': 0.8, 'strong': 0.6, 'best': 0.6}
+        self.min_length = {'medium': 8, 'strong': 8, 'best': 14}
+        self.min_charsets = {'medium': 2, 'strong': 3, 'best': 3}
+        self.similarity = {'medium': False, 'strong': True, 'best': True}
+
+        if strength not in self.strengths:
+            strength = self.strengths[0]
+        self.strength = strength
+
+    def is_charset_type(self, c, c_class):
+        if c_class == 'capital':
+            return c.isalpha() and c == c.upper()
+        if c_class == 'lower':
+            return c.isalpha() and c == c.lower()
+        if c_class == 'digit':
+            return c.isdigit()
+        if c_class == 'punctuation':
+            return c in self.punctuation
+        return False
+
+    def canonicalize_word(self, word, letters_only=False):
+        canonicalized = ''
+        for c in list(word.lower()):
+            if letters_only and not self.is_charset_type(c, 'lower'):
+                canonicalized += c
+            else:
+                canonicalized += self.similarity_map.get(c, c)
+        return canonicalized
+
+    def charset_span(self, word):
+        checks = {'capital': 0, 'lower': 0, 'digit': 0, 'punctuation': 0}
+        for c in list(word):
+            for key in checks:
+                if not checks[key] and self.is_charset_type(c, key):
+                    checks[key] = 1
+                    break
+        return sum(checks.values())
+
+    def in_dictionary(self, word):
+        similarity_check = self.similarity[self.strength]
+        canonicalized = self.canonicalize_word(word, letters_only=similarity_check)
+        word_length = len(canonicalized)
+
+        try:
+            if canonicalized in self.word_list[word_length]:
+                return True
+        except KeyError:
+            pass
+
+        if similarity_check:
+            minimum_meaningful_match = int(math.floor((self.thresholds[self.strength]) * word_length))
+            for length in xrange(minimum_meaningful_match, word_length):
+                for start in xrange(0, word_length - minimum_meaningful_match):
+                    subword = canonicalized[start:start + length]
+                    try:
+                        if subword in self.word_list[len(subword)]:
+                            return True
+                    except KeyError:
+                        pass
+        return False
+
+    def strong_enough(self, password):
+        if not password:
+            return False
+        if len(password) < self.min_length[self.strength]:
+            return False
+        if self.charset_span(password) < self.min_charsets[self.strength]:
+            return False
+        if self.in_dictionary(password):
+            return False
+        return True
+
+#global password_checker
+#password_checker = PasswordStrengthChecker(strength='strong')
+#print password_checker.strong_enough("password123")
+#print password_checker.in_dictionary("camaro")
+
 
 # sim_key=gen_key(16)
 # iv=gen_iv()
@@ -122,3 +261,5 @@ def test_integrity(f,f_h):
 # print dc
 
 #print check_ownership("teste1", "tese1_dir")
+
+

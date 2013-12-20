@@ -1,8 +1,8 @@
-root_path="/home/lafaiet/mypath"
-data_base="/home/lafaiet/Drop_Pobre/server/data/database.db"
+root_path="/home/lafa/mypath"
+data_base="/home/lafa/Drop_Pobre/server/data/database.db"
 
-KEYFILE='/home/lafaiet/Drop_Pobre/server/scripts/privkey.pem' # Replace with your PEM formatted key file
-CERTFILE='/home/lafaiet/Drop_Pobre/server/scripts/newcert.pem'  # Replace with your PEM formatted certificate file
+KEYFILE='/home/lafa/Drop_Pobre/server/scripts/privkey.pem' # Replace with your PEM formatted key file
+CERTFILE='/home/lafa/Drop_Pobre/server/scripts/newcert.pem'  # Replace with your PEM formatted certificate file
 # Configure above
 
 # XMLRPC

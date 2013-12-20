@@ -113,32 +113,29 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
                 for d in dependencies:
                     for i in range(len(d.owners)):
                         c=d.owners[i]
-                        d.owners.pop(i)
                         if client==c:
+                            d.owners.pop(i)
                             if d.pend_type=="D":
                                 return "D",d.directory,d.f
 
                             if d.pend_type=="C":
-                                  sim_key=gen_key(16)
-                                  iv=gen_iv()
-                                  f=root_path+"/"+d.directory+"/"+d.f
-                                  f_h=get_f_h(f)
-#                                 th=Thread( target=f_created_s, args = (f, sim_key, iv) )
-#                                 th.start()
-                                  print "type:"
-                                  print type(d.directory+d.f+sim_key+iv+f_h)
-#                                 return "C",d.directory,d.f,sim_key,iv,f_h
-                                  return "C"
+                                sim_key=gen_key(16)
+                                iv=gen_iv()
+                                f=root_path+"/"+d.directory+"/"+d.f
+                                f_h=get_f_h(f)
+                                th=Thread( target=f_created_s, args = (f, sim_key, iv) )
+                                th.start()
+                                return "C",d.directory,d.f,sim_key,iv,f_h
 
                             if d.pend_type=="M":
-#                                 sim_key=gen_key(16)
-#                                 iv=gen_iv()
-#                                 f=root_path+"/"+d.directory+"/"+d.f
-#                                 f_h=get_f_h(f)
-#                                 th=Thread( target=f_created_s, args = (f, sim_key, iv) )
-#                                 th.start()
-#                                 return "C",d.directory,d.f,sim_key,iv,f_h
-                                  return "M"
+                                sim_key=gen_key(16)
+                                iv=gen_iv()
+                                f=root_path+"/"+d.directory+"/"+d.f
+                                f_h=get_f_h(f)
+                                th=Thread( target=f_created_s, args = (f, sim_key, iv) )
+                                th.start()
+                                return "C",d.directory,d.f,sim_key,iv,f_h
+
 
 
                 return "N"

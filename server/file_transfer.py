@@ -27,7 +27,6 @@ def f_server(f,sim_key,iv):
     s.listen(10)
 
     sc, address = s.accept()
-    print f
     r_f = open("temp",'wb') #open in binary
     l = 1
     while(l):

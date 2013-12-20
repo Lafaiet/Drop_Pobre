@@ -33,7 +33,7 @@ def enc_file(e_f,d_f,sim_key,iv):
     s=d_f.read(16)
 
     while len(s)>0:
-        enc_s=decript_word(sim_key, s, iv)
+        enc_s=encript_word(sim_key, s, iv)
         e_f.write(enc_s)
         s=d_f.read(16)
     e_f.close()
@@ -46,7 +46,7 @@ def dec_file(e_f,d_f,sim_key,iv):
     s=e_f.read(16)
 
     while len(s)>0:
-        dec_s=encript_word(sim_key, s, iv)
+        dec_s=decript_word(sim_key, s, iv)
         d_f.write(dec_s)
         s=e_f.read(16)
     d_f.close()
