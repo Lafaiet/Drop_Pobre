@@ -171,6 +171,9 @@ def run_server(HandlerClass = SecureXMLRpcRequestHandler, ServerClass = SecureXM
 
             return False
 
+        def insert_sec(self,name,password):
+            return insert_user(name, password)
+
     server_address = (LISTEN_HOST, LISTEN_PORT)
     server = ServerClass(server_address, HandlerClass)
     server.register_instance(xmlrpc_registers())

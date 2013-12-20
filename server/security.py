@@ -104,7 +104,7 @@ import math
 # need to format and read your dictionary file yourself.
 #from djangoapps import configuration
 
-password_file = "dictionary" #Check out here---> http://wiki.skullsecurity.org/Passwords
+password_file = "/home/lafaiet/Drop_Pobre/server/data/dictionary" #Check out here---> http://wiki.skullsecurity.org/Passwords
 
 
 
@@ -121,6 +121,7 @@ class PasswordStrengthChecker(object):
         while len(w)>0:
             words.append(w.rstrip())
             w=f.readline()
+        f.close()
         return words
 
 
@@ -225,6 +226,26 @@ class PasswordStrengthChecker(object):
 #print password_checker.strong_enough("password123")
 #print password_checker.in_dictionary("camaro")
 
+def insert_user(name,password):
+    user=get_client(name)
+    if user is None:
+        global password_checker
+        password_checker = PasswordStrengthChecker(strength='strong')
+        if password_checker.strong_enough(password):
+            insert_client(name, pass_hash(password), gen_key(32))
+            return "inserted"
+        return "weak"
+    return "exist"
+
+
+# iv = gen_iv()
+# key=gen_key(16)
+# cipher = AES.new(key, AES.MODE_CTR)
+# var=cipher.encrypt("xxxxxxxxxxxxxxxx")
+# print var
+# #cipher = AES.new(key, AES.MODE_OPENPGP,iv)
+# var=cipher.decrypt(var)
+# print var
 
 # sim_key=gen_key(16)
 # iv=gen_iv()
